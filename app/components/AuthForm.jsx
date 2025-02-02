@@ -1,13 +1,37 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
+import { loginAPI, signupAPI } from "../endpoints/auth";
+import { useRouter } from "next/navigation";
 
 const AuthForm = ({ isLogin = true }) => {
+  const [val, setVal] = useState({ name: "", email: "", password: "" });
+  const router = useRouter();
+
+  const handleChange = (e) =>
+    setVal({ ...val, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isLogin) {
+      const error = await loginAPI(val);
+      if (!error) {
+        router.push("/");
+      }
+    } else {
+      const error = await signupAPI(val);
+      if (!error) {
+        router.push("/");
+      }
+    }
+  };
   return (
     <div className="max-w-screen-sm mx-auto mt-12 rounded-md p-5 bg-white md:border md:shadow-md">
       <h3 className="text-center text-2xl font-bold mb-5">
         {isLogin ? "Login" : "Signup"}
       </h3>
-      <form>
+      <form onSubmit={handleSubmit}>
         {!isLogin && (
           <div className="mb-4">
             <label htmlFor="name">Username:</label>
@@ -16,6 +40,8 @@ const AuthForm = ({ isLogin = true }) => {
               id="name"
               name="name"
               type="name"
+              value={val.name}
+              onChange={handleChange}
             />
           </div>
         )}
@@ -26,6 +52,8 @@ const AuthForm = ({ isLogin = true }) => {
             id="email"
             name="email"
             type="email"
+            value={val.email}
+            onChange={handleChange}
           />
         </div>
         <div className="mb-4">
@@ -35,6 +63,8 @@ const AuthForm = ({ isLogin = true }) => {
             id="password"
             name="password"
             type="password"
+            value={val.password}
+            onChange={handleChange}
           />
         </div>
         <div className="text-center">
