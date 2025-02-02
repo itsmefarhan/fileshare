@@ -24,3 +24,23 @@ export const addDocAPI = async (val) => {
     uid: res.data.user.id,
   });
 };
+
+export const getDocsAPI = async (uid) => {
+  const res = await supabase
+    .from("docs")
+    .select("*")
+    .eq("uid", uid)
+    .order("created_at", { ascending: false });
+
+  return res.data;
+};
+
+export const deleteDocAPI = async (item) => {
+  const res = await supabase.auth.getUser();
+  await bucket.remove([item.file_path]);
+  await supabase
+    .from("docs")
+    .delete()
+    .eq("id", item.id)
+    .eq("uid", res.data.user.id);
+};

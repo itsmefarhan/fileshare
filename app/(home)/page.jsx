@@ -1,12 +1,13 @@
 import Content from "./Content";
 import { createClient } from "../utils/server";
 import { redirect } from "next/navigation";
+import { getDocsAPI } from "../endpoints/docs";
 
-const data = [
-  { id: 1, title: "Title one", date: new Date().toDateString() },
-  { id: 2, title: "Title two", date: new Date().toDateString() },
-  { id: 3, title: "Title three", date: new Date().toDateString() },
-];
+// const data = [
+//   { id: 1, title: "Title one", date: new Date().toDateString() },
+//   { id: 2, title: "Title two", date: new Date().toDateString() },
+//   { id: 3, title: "Title three", date: new Date().toDateString() },
+// ];
 
 export default async function Home() {
   const supabase = await createClient();
@@ -15,5 +16,7 @@ export default async function Home() {
   if (!res.data.user) {
     redirect("/login");
   }
+
+  const data = await getDocsAPI(res.data.user.id)
   return <Content data={data} />;
 }
