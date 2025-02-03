@@ -21,10 +21,16 @@ const Content = ({ data }) => {
         { event: "*", schema: "public", table: "docs" },
         (payload) => {
           console.log(payload);
-          if(payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             setDocs([payload.new, ...docs]);
-          } else if(payload.eventType === 'DELETE') {
-            setDocs(prev => prev.filter(el => el.id !== payload.old.id))
+          } else if (payload.eventType === "DELETE") {
+            setDocs((prev) => prev.filter((el) => el.id !== payload.old.id));
+          } else if (payload.eventType === "UPDATE") {
+            setDocs((prev) =>
+              prev.map((item) =>
+                item.id === payload.new.id ? payload.new : item
+              )
+            );
           }
         }
       )
@@ -42,7 +48,7 @@ const Content = ({ data }) => {
   return (
     <section>
       <div className="max-w-96 mx-auto">
-        <UploadForm edit={edit} />
+        <UploadForm edit={edit} setEdit={setEdit} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mt-10">
         {docs.map((item) => (

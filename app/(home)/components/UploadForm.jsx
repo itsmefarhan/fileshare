@@ -1,18 +1,21 @@
 "use client";
-import { addDocAPI } from "@/app/endpoints/docs";
+import { addDocAPI, updateDocAPI } from "@/app/endpoints/docs";
 import { useEffect, useState } from "react";
 
-const UploadForm = ({ edit }) => {
+const UploadForm = ({ edit, setEdit }) => {
   const [val, setVal] = useState({ title: "", file: "" });
 
   useEffect(() => {
     if (edit) {
-      setVal({ title: edit.title, file: edit.file });
+      setVal({ title: edit.title });
     }
   }, [edit]);
 
   const handleSubmit = async () => {
     if (edit) {
+      if (!val.title) return;
+      await updateDocAPI(val, edit);
+      setEdit(null);
     } else {
       if (!val.title || !val.file) return;
       await addDocAPI(val);

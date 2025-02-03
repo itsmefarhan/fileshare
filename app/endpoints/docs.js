@@ -44,3 +44,19 @@ export const deleteDocAPI = async (item) => {
     .eq("id", item.id)
     .eq("uid", res.data.user.id);
 };
+
+export const updateDocAPI = async (val, edit) => {
+  const res = await supabase.auth.getUser();
+  let item = { title: val.title };
+  if (val.file) {
+    await bucket.remove([edit.file_path]);
+    const { file_path, file_url } = await uploadFile(val.file);
+    item["file_path"] = file_path;
+    item["file_url"] = file_url;
+  }
+  await supabase
+    .from("docs")
+    .update(item)
+    .eq("id", edit.id)
+    .eq("uid", res.data.user.id);
+};
