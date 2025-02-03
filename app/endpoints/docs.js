@@ -60,3 +60,8 @@ export const updateDocAPI = async (val, edit) => {
     .eq("id", edit.id)
     .eq("uid", res.data.user.id);
 };
+
+export const getDocAPI = async (id) => {
+  const res = await supabase.from("docs").select("*").eq("id", id).single();
+  return res.data;
+};
